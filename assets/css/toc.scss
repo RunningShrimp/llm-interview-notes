@@ -1,0 +1,646 @@
+// ============================================================================
+// Table of Contents Sidebar Styling
+// ============================================================================
+// This file provides styling for the sidebar table of contents component,
+// including responsive design, dark mode support, and accessibility features.
+// ============================================================================
+
+// Variables
+// ============================================================================
+$toc-bg-light: #ffffff;
+$toc-bg-dark: #1e1e1e;
+$toc-border-light: #e0e0e0;
+$toc-border-dark: #333333;
+$toc-text-light: #1a1a1a;
+$toc-text-dark: #e0e0e0;
+$toc-text-muted-light: #666666;
+$toc-text-muted-dark: #999999;
+$toc-link-color: #0066cc;
+$toc-link-hover: #0052a3;
+$toc-active-bg-light: #f0f0f0;
+$toc-active-bg-dark: #2a2a2a;
+$toc-active-border: #0066cc;
+
+$toc-spacing-xs: 0.25rem;
+$toc-spacing-sm: 0.5rem;
+$toc-spacing-md: 1rem;
+$toc-spacing-lg: 1.5rem;
+$toc-spacing-xl: 2rem;
+
+$toc-border-radius: 4px;
+$toc-transition-duration: 200ms;
+$toc-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Breakpoints
+$breakpoint-xs: 320px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// ============================================================================
+// Mixins
+// ============================================================================
+
+@mixin transition($property: all) {
+  transition: $property $toc-transition-duration $toc-transition-easing;
+}
+
+@mixin focus-ring {
+  outline: 2px solid $toc-link-color;
+  outline-offset: 2px;
+}
+
+@mixin dark-mode {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
+@mixin light-mode {
+  @media (prefers-color-scheme: light) {
+    @content;
+  }
+}
+
+@mixin screen-up($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin screen-down($breakpoint) {
+  @media (max-width: $breakpoint - 1px) {
+    @content;
+  }
+}
+
+@mixin reduce-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// ============================================================================
+// Base Sidebar Container
+// ============================================================================
+
+.toc-sidebar {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100vh;
+  background-color: $toc-bg-light;
+  border-left: 1px solid $toc-border-light;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 999;
+  @include transition(right);
+
+  @include dark-mode {
+    background-color: $toc-bg-dark;
+    border-left-color: $toc-border-dark;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.5);
+  }
+
+  @include reduce-motion {
+    transition: none;
+  }
+
+  // Mobile: Convert to overlay/modal style
+  @include screen-down($breakpoint-lg) {
+    position: fixed;
+    right: 0;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
+
+    @include dark-mode {
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  // Open state
+  &.is-open {
+    right: 0;
+  }
+
+  // Scrollbar styling (webkit browsers)
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    @include dark-mode {
+      background-color: rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+// Overlay backdrop for mobile
+.toc-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  @include transition(opacity);
+
+  @include screen-down($breakpoint-lg) {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+
+    &.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  @include reduce-motion {
+    transition: none;
+  }
+}
+
+// ============================================================================
+// Sidebar Header
+// ============================================================================
+
+.toc-header {
+  position: sticky;
+  top: 0;
+  background-color: $toc-bg-light;
+  border-bottom: 1px solid $toc-border-light;
+  padding: $toc-spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+
+  @include dark-mode {
+    background-color: $toc-bg-dark;
+    border-bottom-color: $toc-border-dark;
+  }
+}
+
+.toc-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $toc-text-light;
+  letter-spacing: -0.5px;
+
+  @include dark-mode {
+    color: $toc-text-dark;
+  }
+}
+
+.toc-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  padding: $toc-spacing-sm;
+  cursor: pointer;
+  color: $toc-text-light;
+  font-size: 1.5rem;
+  @include transition(color);
+
+  @include dark-mode {
+    color: $toc-text-dark;
+  }
+
+  &:hover,
+  &:focus {
+    color: $toc-link-color;
+  }
+
+  &:focus {
+    @include focus-ring;
+  }
+
+  @include screen-down($breakpoint-lg) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+  @include reduce-motion {
+    transition: none;
+  }
+}
+
+// ============================================================================
+// Sidebar Content
+// ============================================================================
+
+.toc-content {
+  padding: $toc-spacing-md;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// ============================================================================
+// List Items and Links
+// ============================================================================
+
+.toc-item {
+  margin: 0;
+  padding: 0;
+}
+
+.toc-link {
+  display: block;
+  padding: $toc-spacing-sm $toc-spacing-md;
+  margin: $toc-spacing-xs 0;
+  color: $toc-text-light;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  border-radius: $toc-border-radius;
+  @include transition(background-color, color, border-color);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: break-word;
+
+  @include dark-mode {
+    color: $toc-text-dark;
+  }
+
+  // Hover state
+  &:hover {
+    background-color: $toc-active-bg-light;
+    color: $toc-link-color;
+
+    @include dark-mode {
+      background-color: $toc-active-bg-dark;
+    }
+  }
+
+  // Focus state for keyboard navigation
+  &:focus {
+    @include focus-ring;
+    background-color: $toc-active-bg-light;
+
+    @include dark-mode {
+      background-color: $toc-active-bg-dark;
+    }
+  }
+
+  // Active state
+  &.is-active {
+    background-color: $toc-active-bg-light;
+    color: $toc-link-color;
+    border-left-color: $toc-active-border;
+    font-weight: 500;
+
+    @include dark-mode {
+      background-color: $toc-active-bg-dark;
+    }
+  }
+
+  @include reduce-motion {
+    transition: none;
+  }
+
+  // Mobile: Increase touch target size
+  @include screen-down($breakpoint-md) {
+    padding: $toc-spacing-md;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// ============================================================================
+// Nested Lists (Indentation)
+// ============================================================================
+
+.toc-item-level-1 > .toc-link {
+  padding-left: $toc-spacing-md;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.toc-item-level-2 > .toc-link {
+  padding-left: calc($toc-spacing-md + $toc-spacing-lg);
+  font-size: 0.9rem;
+  color: $toc-text-muted-light;
+
+  @include dark-mode {
+    color: $toc-text-muted-dark;
+  }
+
+  &:hover,
+  &.is-active {
+    color: $toc-link-color;
+  }
+}
+
+.toc-item-level-3 > .toc-link {
+  padding-left: calc($toc-spacing-md + $toc-spacing-lg * 2);
+  font-size: 0.85rem;
+  color: $toc-text-muted-light;
+
+  @include dark-mode {
+    color: $toc-text-muted-dark;
+  }
+
+  &:hover,
+  &.is-active {
+    color: $toc-link-color;
+  }
+}
+
+.toc-item-level-4 > .toc-link {
+  padding-left: calc($toc-spacing-md + $toc-spacing-lg * 3);
+  font-size: 0.8rem;
+  color: $toc-text-muted-light;
+
+  @include dark-mode {
+    color: $toc-text-muted-dark;
+  }
+
+  &:hover,
+  &.is-active {
+    color: $toc-link-color;
+  }
+}
+
+// ============================================================================
+// Collapsible Sections
+// ============================================================================
+
+.toc-toggle-btn {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include transition(transform);
+
+  @include reduce-motion {
+    transition: none;
+  }
+
+  &[aria-expanded="true"] {
+    transform: rotate(90deg);
+  }
+}
+
+.toc-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 1000px;
+  overflow: hidden;
+  @include transition(max-height);
+
+  @include reduce-motion {
+    transition: none;
+  }
+
+  &[aria-hidden="true"] {
+    max-height: 0;
+    pointer-events: none;
+  }
+}
+
+// ============================================================================
+// Accessibility Features
+// ============================================================================
+
+// Skip to main content link
+.toc-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background-color: $toc-link-color;
+  color: white;
+  padding: $toc-spacing-sm $toc-spacing-md;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: $toc-border-radius;
+
+  &:focus {
+    top: $toc-spacing-md;
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+}
+
+// Ensure focus indicators are visible
+.toc-sidebar *:focus-visible {
+  outline: 2px solid $toc-link-color;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: more) {
+  .toc-sidebar {
+    border-left-width: 2px;
+  }
+
+  .toc-link {
+    border-left-width: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline-width: 3px;
+    }
+  }
+
+  .toc-item-level-2 > .toc-link,
+  .toc-item-level-3 > .toc-link,
+  .toc-item-level-4 > .toc-link {
+    color: $toc-text-light;
+
+    @include dark-mode {
+      color: $toc-text-dark;
+    }
+  }
+}
+
+// ============================================================================
+// Print Styles
+// ============================================================================
+
+@media print {
+  .toc-sidebar,
+  .toc-backdrop {
+    display: none !important;
+  }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+// Extra small devices (mobile phones)
+@include screen-down($breakpoint-sm) {
+  .toc-sidebar {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .toc-link {
+    font-size: 1rem;
+  }
+
+  .toc-item-level-1 > .toc-link {
+    font-size: 1rem;
+  }
+
+  .toc-item-level-2 > .toc-link {
+    font-size: 0.95rem;
+  }
+
+  .toc-item-level-3 > .toc-link {
+    font-size: 0.9rem;
+  }
+
+  .toc-item-level-4 > .toc-link {
+    font-size: 0.85rem;
+  }
+}
+
+// Small devices (tablets)
+@include screen-up($breakpoint-md) {
+  .toc-sidebar {
+    width: 300px;
+  }
+}
+
+// Medium devices and up (desktops)
+@include screen-up($breakpoint-lg) {
+  .toc-sidebar {
+    position: relative;
+    right: 0;
+    height: auto;
+    box-shadow: none;
+    border-left: 1px solid $toc-border-light;
+
+    @include dark-mode {
+      border-left-color: $toc-border-dark;
+    }
+  }
+
+  .toc-backdrop {
+    display: none !important;
+  }
+
+  .toc-close-btn {
+    display: none !important;
+  }
+
+  .toc-header {
+    position: relative;
+  }
+}
+
+// Extra large devices (wide desktops)
+@include screen-up($breakpoint-xl) {
+  .toc-sidebar {
+    width: 380px;
+  }
+}
+
+// ============================================================================
+// Loading and Empty States
+// ============================================================================
+
+.toc-loading {
+  padding: $toc-spacing-lg;
+  text-align: center;
+  color: $toc-text-muted-light;
+
+  @include dark-mode {
+    color: $toc-text-muted-dark;
+  }
+}
+
+.toc-empty {
+  padding: $toc-spacing-lg;
+  text-align: center;
+  color: $toc-text-muted-light;
+  font-size: 0.9rem;
+
+  @include dark-mode {
+    color: $toc-text-muted-dark;
+  }
+}
+
+// ============================================================================
+// Animations
+// ============================================================================
+
+@keyframes slideInRight {
+  from {
+    right: -350px;
+    opacity: 0;
+  }
+  to {
+    right: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    right: 0;
+    opacity: 1;
+  }
+  to {
+    right: -350px;
+    opacity: 0;
+  }
+}
+
+.toc-sidebar.is-opening {
+  animation: slideInRight $toc-transition-duration $toc-transition-easing forwards;
+}
+
+.toc-sidebar.is-closing {
+  animation: slideOutRight $toc-transition-duration $toc-transition-easing forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-sidebar.is-opening,
+  .toc-sidebar.is-closing {
+    animation: none;
+  }
+}

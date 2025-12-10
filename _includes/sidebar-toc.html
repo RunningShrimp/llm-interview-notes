@@ -1,0 +1,138 @@
+<div class="sidebar-toc">
+  <nav class="toc-navigation">
+    <h3 class="toc-title">Table of Contents</h3>
+    
+    <ul class="toc-list">
+      {% for item in site.data.toc %}
+        <li class="toc-item">
+          <a href="{{ item.url }}" class="toc-link">{{ item.title }}</a>
+          
+          {% if item.children %}
+            <ul class="toc-sublist">
+              {% for child in item.children %}
+                <li class="toc-subitem">
+                  <a href="{{ child.url }}" class="toc-sublink">{{ child.title }}</a>
+                  
+                  {% if child.children %}
+                    <ul class="toc-nested-list">
+                      {% for nested in child.children %}
+                        <li class="toc-nested-item">
+                          <a href="{{ nested.url }}" class="toc-nested-link">{{ nested.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</div>
+
+<style>
+  .sidebar-toc {
+    position: sticky;
+    top: 0;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .toc-navigation {
+    font-size: 0.95rem;
+  }
+
+  .toc-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+  }
+
+  .toc-list,
+  .toc-sublist,
+  .toc-nested-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .toc-sublist {
+    margin-left: 1rem;
+    margin-top: 0.25rem;
+    border-left: 2px solid #dee2e6;
+    padding-left: 0.75rem;
+  }
+
+  .toc-subitem {
+    margin-bottom: 0.25rem;
+  }
+
+  .toc-nested-list {
+    margin-left: 0.75rem;
+    margin-top: 0.125rem;
+    padding-left: 0.5rem;
+  }
+
+  .toc-nested-item {
+    margin-bottom: 0.125rem;
+  }
+
+  .toc-link,
+  .toc-sublink,
+  .toc-nested-link {
+    display: block;
+    padding: 0.4rem 0.5rem;
+    color: #0066cc;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .toc-link:hover,
+  .toc-sublink:hover,
+  .toc-nested-link:hover {
+    background-color: #e7f1ff;
+    color: #0052a3;
+    padding-left: 0.75rem;
+  }
+
+  .toc-link.active,
+  .toc-sublink.active,
+  .toc-nested-link.active {
+    color: #fff;
+    background-color: #0066cc;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar-toc {
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .toc-title {
+      font-size: 1rem;
+    }
+
+    .toc-navigation {
+      font-size: 0.9rem;
+    }
+
+    .toc-link,
+    .toc-sublink,
+    .toc-nested-link {
+      padding: 0.35rem 0.4rem;
+    }
+  }
+</style>

@@ -1,3 +1,17 @@
 title: AI 大模型应用开发面试大纲
 description: 面向 AI 大模型应用开发岗位的面试复习提纲（含示例回答）
 theme: minima
+lang: zh-CN
+author: RunningShrimp
+show_excerpts: false
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap

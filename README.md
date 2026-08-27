@@ -1,110 +1,62 @@
-# 🧭 后端 → AI 应用工程师 · 面试备考手册
+# 后端 → AI 应用 / Agent 工程师 · 转型与面试手册
 
-> **一句话定位**：面向后端工程师转型 AI 应用方向的系统备考知识库——不深入算法与数学推导，一切以「工程判断力 + 系统设计 + 生产化」为核心。10 篇分层笔记、约 9700 行，小林 coding 风格（ASCII 图 + 对比表 + 🎤 问答），每层含**基础篇 + 进阶篇（高级岗深挖区）**。
+> 把后端积累的工程能力，迁移到 AI 应用与 Agent 开发。9 层知识地图 + 100 道算法题 + 13 道系统设计，按面试考察频率组织——免费、无需登录，打开就能读。
 
-本站基于 [Docsify](https://docsify.js.org/) 搭建，纯静态免构建，支持中文全文搜索（侧栏顶部搜索框）。
+## 写给谁
 
----
+**适合你，如果——**
 
-## 🗺️ 知识地图
+- 干了 2-5 年后端（Java / Go / Python 都行），正在考虑或刚开始转 AI 应用工程师、Agent 工程师、AI 平台岗
+- 面试前 1-3 个月，想系统梳理一遍工程视角的 AI 知识，而不是背八股
+- LLM 的概念都听过，但评测、可观测、成本、安全这段生产化的空缺一直没补上
 
-入口建议从总纲开始：**[00_面试知识大纲.md](00_面试知识大纲.md)**（433 行）——核心观点、九层体系总览、面试官「四大追问」闭环、2025-2026 高频考点排序，读完即可定下自己的备考优先级。
+**可能不适合——**
 
-| 分类 | 文件 | 主题 | 行数 |
-|------|------|------|-----:|
-| 一、基础盘 | [01_L1_后端基础](1-基础盘/01_L1_后端基础.md) | 网络 / 数据库 / Redis / MQ / 分布式 + AI 场景映射 | 1178 |
-| 二、LLM 应用核心 | [02_L2_LLM应用基础](2-LLM应用核心/02_L2_LLM应用基础.md) | Token / Context Window / API 工程化 / SSE / 推理性能 | 880 |
-| | [03_L3_Prompt与Context工程](2-LLM应用核心/03_L3_Prompt与Context工程.md) | Prompt 分层 / 结构化输出 / 上下文工程 / 推理范式 | 957 |
-| | [04_L4_知识库与数据工程](2-LLM应用核心/04_L4_知识库与数据工程.md) | 解析管线 / 切块 / 元数据 / 异步入库流水线 | 834 |
-| | [05_L5_RAG检索增强生成](2-LLM应用核心/05_L5_RAG检索增强生成.md) | 混合检索 / Rerank / Agentic RAG / 失效排查 | 1143 |
-| | [06_L6_Agent构建与编排](2-LLM应用核心/06_L6_Agent构建与编排.md) | Workflow vs Agent / MCP / 多 Agent / 记忆 / HITL | 1320 |
-| 三、生产工程化 | [07_L7_评测体系](3-生产工程化/07_L7_评测体系.md) | 三层指标 / LLM-as-Judge / trace 级评测 / 反馈闭环 | 864 |
-| | [08_L8_生产化_可观测_成本_安全](3-生产工程化/08_L8_生产化_可观测_成本_安全.md) | AI Trace / 模型级联 / 语义缓存 / 注入防御 / 降级 | 1006 |
-| 四、面试冲刺 | [09_L9_热点与AI系统设计](4-面试冲刺/09_L9_热点与AI系统设计.md) | 前沿热点 / 系统设计 walkthrough / STAR-L | 1110 |
+- 纯算法研究员，或已在 AI Infra 一线多年（这些内容对你偏浅）
+- 想找"七天速成"的人——手册是拿来读的，不是拿来收藏的
 
-附录（备查）：知识库的三份原始参考素材——[sources/1.md](sources/1.md)（阶段叙事版）、[sources/2.md](sources/2.md)（工程深度版）、[sources/3.md](sources/3.md)（十层全景版）。
+## 这份手册里有什么
 
-| 五、算法热题 100 | [00 · 热题 100 总览](5-算法热题100/00_热题100总览.md) | 17 组 × 100 题覆盖 + 算法地图 + 4 阶段刷题顺序 | 164 |
-| | [01 · 哈希](5-算法热题100/01_哈希.md) | LC1 / LC49 / LC128 | 303 |
-| | [02 · 双指针](5-算法热题100/02_双指针.md) | LC283 / LC11 / LC15 / LC42 | 400 |
-| | [03 · 滑动窗口](5-算法热题100/03_滑动窗口.md) | LC438 / LC3 | 252 |
-| | [04 · 子串](5-算法热题100/04_子串.md) | LC560 / LC239 / LC76 | 390 |
-| | [05 · 普通数组](5-算法热题100/05_普通数组.md) | LC53 / LC56 / LC189 / LC238 / LC41 | 446 |
-| | [06 · 矩阵](5-算法热题100/06_矩阵.md) | LC73 / LC54 / LC48 / LC240 | 449 |
-| | [07 · 链表](5-算法热题100/07_链表.md) | LC160/206/143/82/86/146 等 14 题 | 899 |
-| | [08 · 二叉树](5-算法热题100/08_二叉树.md) | LC94/104/230/199/114/124 等 15 题 | 904 |
-| | [09 · 图论](5-算法热题100/09_图论.md) | LC200/994/207/208/211/212 | 639 |
-| | [10 · 回溯](5-算法热题100/10_回溯.md) | LC46/78/17/39/22/79/131/51 | 782 |
-| | [11 · 二分查找](5-算法热题100/11_二分查找.md) | LC35/74/34/33/153/4 | 558 |
-| | [12 · 栈](5-算法热题100/12_栈.md) | LC20/155/394/739 | 382 |
-| | [13 · 堆](5-算法热题100/13_堆.md) | LC215/347/295 | 465 |
-| | [14 · 贪心算法](5-算法热题100/14_贪心算法.md) | LC121/55/45 | 299 |
-| | [15 · 技巧](5-算法热题100/15_技巧.md) | LC136/169/75/31/287/41 | 532 |
-| | [16 · 动态规划](5-算法热题100/16_动态规划.md) | LC70/118/198/279/322/139/300/152/416/32 | 848 |
-| | [17 · 多维动态规划](5-算法热题100/17_多维动态规划.md) | LC62/64/5/1143/72 | 453 |
-| 六、系统设计题 | [00 · 总览与刷题顺序](6-系统设计题/00_设计题总览.md) | 13 道白板压轴：后端经典 5 + AI 工程化 8，考频按 2026-08 检索校准 | 75 |
-| | [01 · 后端经典五题](6-系统设计题/01_后端经典五题.md) | 秒杀/短链/分布式锁/多维限流（含 AI 变体）/延迟任务 | 1012 |
-| | [02 · AI 平台三题](6-系统设计题/02_AI平台三题_网关_Agent平台_多Agent协作.md) | LLM 网关路由/Agent 平台（MCP+沙箱+记忆）/多 Agent 协作编排 | 1181 |
-| | [03 · AI 数据三题](6-系统设计题/03_AI数据三题_RAG链路_知识库pipeline_成本缓存.md) | RAG 全链路规模化/入库流水线/Token 成本与缓存 | 1198 |
-| | [04 · AI 质量两题](6-系统设计题/04_AI质量两题_评测平台_可观测体系.md) | 评测平台（judge 治理+回归门禁）/全链路 Trace+badcase 闭环 | 849 |
+- **9 层知识地图（L1-L9）**：每章结构固定——先看考察频率和面试官想听什么，再拆知识点（是什么 → 为什么 → 怎么做），最后是「面试这样答」口述版与章末速查表
+- **算法热题 100**：17 组 100 题，每题带可编译的 Go 参考实现和口述模板
+- **系统设计 13 题**：后端经典 5 道 + AI 工程化 8 道，按白板面试的讲法组织
+- 全站支持中文全文搜索（左上角搜索框），侧栏可直达任意章节
 
-每层文件体例一致：**本章导读**（考察频率★ + 面试官想听什么 + ASCII 知识地图）→ **知识点详解**（是什么 → 为什么 → 怎么做，ASCII 图 + 对比表）→ **🎤 面试这样答**（含追问链）→ **章末速查表 + 自检清单**。
+## 知识地图
 
----
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:20px 0 8px;"><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/1-基础盘/01_L1_后端基础" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L1 · 后端基础</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">网络 / DB / Redis / MQ 速复习，并映射到 AI 场景</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/2-LLM应用核心/02_L2_LLM应用基础" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L2 · LLM 应用基础</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">把模型当软件组件：Token、上下文窗口、API 工程化</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/2-LLM应用核心/03_L3_Prompt与Context工程" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L3 · Prompt 与 Context 工程</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">prompt 即程序：结构化输出、上下文工程</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/2-LLM应用核心/04_L4_知识库与数据工程" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L4 · 知识库与数据工程</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">切块、元数据、入库流水线——数据质量决定上限</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#eef3fa;"><a href="#/2-LLM应用核心/05_L5_RAG检索增强生成" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#1d4486;margin:0 0 6px;">L5 · RAG 检索增强生成</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">面试主战场：混合检索、Rerank、Agentic RAG</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/2-LLM应用核心/06_L6_Agent构建与编排" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L6 · Agent 构建与编排</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">Workflow vs Agent、MCP、多 Agent 协作</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/3-生产工程化/07_L7_评测体系" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L7 · 评测体系</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">Demo 工程师与生产工程师的分水岭</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/3-生产工程化/08_L8_生产化_可观测_成本_安全" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L8 · 生产化</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">上线后的大考：可观测、成本、安全、注入防御</div></div><div style="border:1px solid #e4e7ec;border-left:3px solid #2c5fb2;border-radius:8px;padding:12px 14px;background:#f9fafc;"><a href="#/4-面试冲刺/09_L9_热点与AI系统设计" style="display:inline-block;border-bottom:none;font-family:var(--mono),monospace;font-size:11px;font-weight:700;letter-spacing:.1em;color:#2c5fb2;margin:0 0 6px;">L9 · 热点与 AI 系统设计</a><div style="font-size:13px;line-height:1.65;color:#3b4450;">前沿热点 + 13 道白板压轴 + STAR-L 讲法</div></div></div>
 
-## 🎯 怎么用
+**两条支线，按需取用：**
 
-1. **先读总纲，定优先级**。不要按顺序从头啃——[00_面试知识大纲](00_面试知识大纲.md) 给出了高频考点排序和备考心法（后端映射 → 模型即组件 → prompt 即程序 → 数据定上限 → 检索定精度 → 编排定能力 → 评测定可信 → 生产定生死），先定主线再铺开。
-2. **主线推进 L2 → L3 → L5**。[LLM 应用基础](2-LLM应用核心/02_L2_LLM应用基础.md) 建立组件视角，[Prompt 与 Context 工程](2-LLM应用核心/03_L3_Prompt与Context工程.md) 掌握把 prompt 当程序设计的方法论，然后重点攻坚 [RAG 检索增强生成](2-LLM应用核心/05_L5_RAG检索增强生成.md)——考察频率最高的硬技能；[L4 数据工程](2-LLM应用核心/04_L4_知识库与数据工程.md) 与 [L6 Agent](2-LLM应用核心/06_L6_Agent构建与编排.md) 顺势串联。
-3. **冲刺阶段压轴 L9 + 各层进阶篇**。面试前一两周过 [热点与 AI 系统设计](4-面试冲刺/09_L9_热点与AI系统设计.md)（热点决定像不像，系统设计决定是不是），再回头把每层文末的进阶篇过一遍，准备高级岗深挖追问。
+- 目标公司有算法面 → [算法热题 100 总览](/5-算法热题100/00_热题100总览)（17 组完整目录在侧栏）
+- 准备二面三面的白板压轴 → [系统设计 13 题总览](/6-系统设计题/00_设计题总览)
 
-**算法向补充**：对于后端转型 AI 工程师，**算法题仍是一二面的硬门槛**。如果目标公司有 OJ 轮，单独刷 [算法热题 100 总览](5-算法热题100/00_热题100总览.md)（17 组 100 题 · 约 9200 行 · 每题含完整可编译 Go 代码 + 🎤 口述模板），按「4 阶段刷题顺序」（基础盘 → 套路升级 → DP 大系 → 差缺补漏）4–6 周过一遍即可。AI 应用岗算法难度通常到中等偏上（LC 困难题 1–2 道），不需要啃完《算法导论》。
+## 怎么读这份手册
 
-侧栏开启了二级标题自动收录（`subMaxLevel: 2`），长文内可以直接跳章节；想找具体知识点（比如「语义缓存」「MCP」），直接用顶部的中文搜索。
+1. **先读[总纲](/00_面试知识大纲)，定优先级**——九层不必从头啃到尾。总纲给出了高频考点排序和贯穿全书的主线：后端映射 → 模型即组件 → prompt 即程序 → 数据定上限 → 检索定精度 → 编排定能力 → 评测定可信 → 生产定生死。
+2. **主线推 L2 → L3 → L5**：先建立"模型即组件"的视角（[L2](/2-LLM应用核心/02_L2_LLM应用基础)），学会把 prompt 当程序设计（[L3](/2-LLM应用核心/03_L3_Prompt与Context工程)），然后攻坚考察频率最高的 [RAG](/2-LLM应用核心/05_L5_RAG检索增强生成)；[L4 数据工程](/2-LLM应用核心/04_L4_知识库与数据工程)与 [L6 Agent](/2-LLM应用核心/06_L6_Agent构建与编排)顺势串联。
+3. **面试前一两周压轴看 [L9](/4-面试冲刺/09_L9_热点与AI系统设计)**：热点决定像不像，系统设计决定是不是。再回头把目标岗位相关章节的进阶追问过一遍。
+
+<details>
+<summary><strong>算法刷题建议（目标公司有 OJ 轮再看）</strong></summary>
+<p>后端转 AI 应用，算法题仍是一二面的硬门槛，但难度通常到 LC 中等偏上即可，不需要啃完《算法导论》。建议按 <a href="#/5-算法热题100/00_热题100总览">热题 100 总览</a> 给出的 4 阶段顺序（基础盘 → 套路升级 → DP 大系 → 查缺补漏），用 4-6 周过一遍 17 组 100 题，每题都带可编译的 Go 参考实现和口述模板。</p>
+</details>
+
+## 进阶追问怎么用
+
+每章末尾有一节「进阶篇」，收录高级岗 / 二三面才会被深挖的问题——更长的追问链、更细的 trade-off 对比。第一次读可以跳过，面试前回头再翻。
+
+<details>
+<summary><strong>想自己部署一份？本地预览与发布</strong></summary>
+<p>本站是纯静态 Docsify 站点，fork 仓库后即可拥有自己的副本：</p>
+<p>① 本地预览：仓库根目录执行 <code>python3 -m http.server 3000</code>，浏览器打开 localhost:3000。Docsify 依赖 fetch 加载 markdown，直接双击 index.html 会白屏，必须走本地 HTTP 服务。<br>② 推送到 GitHub（根目录的 .nojekyll 已就位，保证 _sidebar.md 等下划线文件不被忽略）。<br>③ 仓库 Settings → Pages → Source 选分支 + /(root)，保存后一两分钟即上线。</p>
+</details>
+
+<details>
+<summary><strong>附录：知识库原始参考素材（备查）</strong></summary>
+<p><a href="#/sources/1">原始素材 · 阶段叙事版</a> · <a href="#/sources/2">原始素材 · 工程深度版</a> · <a href="#/sources/3">原始素材 · 十层全景版</a></p>
+</details>
 
 ---
 
-## 🔱 进阶篇是什么
-
-每个分层文件（L1–L9）的文末都有一节 **「进阶篇：高级岗深挖区」**：
-
-- **基础篇**建立完整知识框架与面试标准答案，覆盖初中级岗位的全部考察点；
-- **进阶篇**收录高级岗才会被深挖的问题——更长的追问链、更细的 trade-off 对比、生产级方案的取舍依据。
-
-适合什么时候看：投递目标偏高级岗、或进入二面 / 三面被面试官连续追问时。建议基础篇过完、建立整体框架后再回来，否则容易一开始就陷进细节。
-
----
-
-## ⚙️ 本地预览与发布
-
-### 本地预览
-
-```bash
-# 在项目根目录执行，浏览器打开 http://localhost:3000
-python3 -m http.server 3000
-```
-
-> Docsify 依赖 fetch 动态加载 md 文件，直接双击 index.html 打开（file:// 协议）会白屏，必须走本地 HTTP 服务。
-
-### 发布到 GitHub Pages（三步）
-
-```text
-① 推送仓库
-   git init
-   git add .
-   git commit -m "init: 面试备考知识库 + docsify 站点"
-   git branch -M main
-   git remote add origin git@github.com:<你的用户名>/<仓库名>.git
-   git push -u origin main
-
-② 打开仓库 Settings → Pages
-
-③ Source 选择 "Deploy from a branch"
-   分支选 main，目录选 /(root)，点 Save
-```
-
-稍等一两分钟，访问 `https://<你的用户名>.github.io/<仓库名>/` 即可。根目录的 `.nojekyll` 空文件已就位，确保以下划线开头的 `_sidebar.md`、`_coverpage.md` 不被 Jekyll 忽略。
-
----
-
-<sub>后端 → AI 应用工程师 · 面试备考手册 · 2026 版 · Powered by Docsify</sub>
+<sub>后端 → AI 应用 / Agent 工程师 · 转型与面试手册 · 2026 版 · 纯静态站点，基于 Docsify</sub>

@@ -579,6 +579,78 @@
     .page-toc a:hover { color: var(--accent); }
     .page-toc a.on { color: var(--accent-deep); font-weight: 600; }
 
+    /* ============ 上一篇 / 下一篇 翻页卡片 ============ */
+    .doc-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 60px 0 0;
+    }
+    .doc-pager-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      min-height: 96px;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper-soft);
+      box-shadow: 0 1px 2px rgba(28, 39, 51, .04);
+      transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+    }
+    a.doc-pager-item {
+      text-decoration: none;
+      border-bottom: none;
+      cursor: pointer;
+    }
+    a.doc-pager-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(44, 95, 178, .5);
+      background: #fff;
+      box-shadow: 0 10px 26px rgba(28, 39, 51, .1);
+    }
+    .doc-pager-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .18em;
+      color: #8aa4c8;
+    }
+    .doc-pager-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a222c;
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    a.doc-pager-item:hover .doc-pager-title { color: var(--accent-deep); }
+    .doc-pager-group {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-pager-next { text-align: right; align-items: flex-end; }
+    /* 空位占位（第一篇的左半 / 最后一篇的右半） */
+    .doc-pager-item.is-empty {
+      border-style: dashed;
+      background: transparent;
+      box-shadow: none;
+      opacity: .75;
+      cursor: default;
+    }
+
+    @media (max-width: 768px) {
+      .doc-pager { grid-template-columns: 1fr; gap: 10px; margin-top: 48px; }
+      .doc-pager-item { min-height: 72px; padding: 14px 16px; }  /* 点击区 ≥ 44px */
+      .doc-pager-prev { order: 1; }
+      .doc-pager-next { order: 2; text-align: left; align-items: flex-start; }
+    }
+
     /* ============ 封面（深色 hero）============ */
     /* docsify 会给 cover 注入内联的随机 HSL 渐变背景，
        必须 !important 才能压过内联样式。 */
@@ -874,7 +946,7 @@
     /* ============ 打印：去掉框架，A4 友好 ============ */
     @media print {
       .sidebar, .sidebar-toggle, .backdrop, .back-top-btn,
-      .page-toc, .read-progress { display: none !important; }
+      .page-toc, .read-progress, .doc-pager { display: none !important; }
       .content { margin-left: 0 !important; padding-right: 0 !important; }
       .markdown-section { max-width: 100%; padding: 0; }
       .markdown-section pre { border: 1px solid #ccc; }
@@ -993,6 +1065,7 @@
 
       hook.doneEach(function () {
         buildToc();
+        buildPager();
         scheduleUpdate();
       });
 
@@ -1066,6 +1139,114 @@
           else break;
         }
         setActiveToc(idx);
+      }
+
+      /* ---- 上一篇 / 下一篇 ----
+         阅读顺序来源：.sidebar-nav 下 <a> 的 DOM 顺序（即 _sidebar.md 的书写顺序）。
+         提取规则（改动侧栏结构时需同步检查这里）：
+           1) 剔除 .app-sub-sidebar 内的链接（subMaxLevel 注入的当前页 H2 锚点）
+           2) 剔除首页（#/）——首页是落地页，不参与线性阅读链
+           3) 按路径去重
+         卡片链接使用 #/path 直链（原生 DOM 注入，不经 markdown 编译器改写），
+         与中文路径导航修复完全兼容。 */
+      function normPath(p) {
+        if (!p) return '/';
+        try { p = decodeURIComponent(p); } catch (e) { /* 保持原样 */ }
+        var q = p.indexOf('?');
+        if (q >= 0) p = p.slice(0, q);
+        if (p.charAt(0) !== '/') p = '/' + p;
+        return p;
+      }
+
+      function currentRoutePath() {
+        var h = location.hash || '';
+        if (h.charAt(0) === '#') h = h.slice(1);
+        return normPath(h);
+      }
+
+      function groupLabelOf(a, nav) {
+        var rootUl = nav.querySelector(':scope > ul');
+        var li = a.closest('li');
+        while (li && li.parentElement !== rootUl) {
+          li = li.parentElement ? li.parentElement.closest('li') : null;
+        }
+        if (!li) return '';
+        var s = li.querySelector(':scope > p > strong, :scope > strong');
+        return s ? s.textContent.trim() : '';
+      }
+
+      function readSidebarOrder() {
+        var nav = document.querySelector('.sidebar-nav');
+        if (!nav) return [];
+        var links = nav.querySelectorAll('a[href]');
+        var seen = {};
+        var items = [];
+        for (var i = 0; i < links.length; i++) {
+          var a = links[i];
+          if (a.closest && a.closest('.app-sub-sidebar')) continue;
+          var href = a.getAttribute('href') || '';
+          if (href.charAt(0) !== '#') continue;
+          var path = normPath(href.slice(1));
+          if (path === '/' || path === '') continue;
+          if (seen[path]) continue;
+          seen[path] = 1;
+          items.push({
+            path: path,
+            title: a.textContent.trim().replace(/\s+/g, ' '),
+            group: groupLabelOf(a, nav)
+          });
+        }
+        return items;
+      }
+
+      function escHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      function pagerItemHtml(side, item) {
+        var cls = side === 'prev' ? 'doc-pager-prev' : 'doc-pager-next';
+        if (!item) {
+          if (side === 'prev') {
+            /* 第一篇：左半给「回到首页」，保持视觉对称 */
+            return '<a class="doc-pager-item ' + cls + '" href="#/" aria-label="回到首页">' +
+              '<span class="doc-pager-label">← 回到首页</span>' +
+              '<span class="doc-pager-title">首页 · 知识地图</span>' +
+              '<span class="doc-pager-group">开始前，先看适不适合你</span></a>';
+          }
+          /* 最后一篇：右半占位 */
+          return '<div class="doc-pager-item ' + cls + ' is-empty" aria-hidden="true">' +
+            '<span class="doc-pager-label">已是最后一篇</span>' +
+            '<span class="doc-pager-title">可从侧栏选择任意章节复习</span></div>';
+        }
+        return '<a class="doc-pager-item ' + cls + '" href="#' + escHtml(item.path) + '">' +
+          '<span class="doc-pager-label">' + (side === 'prev' ? '← 上一篇' : '下一篇 →') + '</span>' +
+          '<span class="doc-pager-title">' + escHtml(item.title) + '</span>' +
+          '<span class="doc-pager-group">' + escHtml(item.group) + '</span></a>';
+      }
+
+      function buildPager() {
+        var old = document.querySelector('.doc-pager');
+        if (old) old.remove();
+        var sec = document.querySelector('.markdown-section');
+        if (!sec) return;
+        var routePath = currentRoutePath();
+        if (routePath === '/' || routePath === '') return;   /* 首页 / 封面不加 */
+        var order = readSidebarOrder();
+        if (!order.length) return;
+        var idx = -1;
+        for (var i = 0; i < order.length; i++) {
+          if (order[i].path === routePath) { idx = i; break; }
+        }
+        if (idx === -1) return;   /* 不在阅读链中的页面（如 404）不加 */
+        var prev = idx > 0 ? order[idx - 1] : null;
+        var next = idx < order.length - 1 ? order[idx + 1] : null;
+        var el = document.createElement('nav');
+        el.className = 'doc-pager';
+        el.setAttribute('aria-label', '上一篇 / 下一篇');
+        el.innerHTML = pagerItemHtml('prev', prev) + pagerItemHtml('next', next);
+        sec.appendChild(el);
       }
     }
 

@@ -2,3 +2,22 @@ User-agent: *
 Allow: /
 
 Sitemap: https://runningshrimp.github.io/llm-interview-notes/sitemap.xml
+
+# AI 爬虫显式放行（GEO 策略）
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /

@@ -1,0 +1,12 @@
+# AI 应用工程师面试备考
+
+> 面向后端工程师转型 AI 应用方向的系统面试备考手册：L1-L9 九层知识体系，基础篇 + 进阶篇，覆盖 LLM 应用基础、Prompt 与 Context 工程、RAG、Agent、评测体系与生产化。
+
+本站为纯静态中文学习站点，共 1 个页面。以下为内容目录：
+
+## 页面目录
+- [AI 应用工程师面试备考](https://runningshrimp.github.io/llm-interview-notes/)
+
+## 相关链接
+- [全部页面列表（站点地图）](https://runningshrimp.github.io/llm-interview-notes/sitemap.xml)
+- [GitHub 仓库](https://github.com/RunningShrimp/llm-interview-notes)
